@@ -66,6 +66,48 @@ def users(msg):
             pass
     return user_dir, CURR_DIR, msg, login, size
 
+def help():
+    return 'pwd - вернёт название рабочей директории\n' \
+           'ls - вернёт список файлов в рабочей директории\n' \
+           'mkdir -  создаёт директорию с указанным именем\n' \
+           'rmdir -  удаляет директорию с указанным именем\n' \
+           'touch -  создаёт файл с указанным именем\n' \
+           'rm -  удаляет файл с указанным именем\n' \
+           'move -  перемещает файл/директорию в другую директорию\n' \
+           'rename -  переименновывает файл с указанным именем \n' \
+           'cat -  вернёт содержимое файла\n' \
+           'help - выводит справку по командам\n' \
+           'exit - выход из системы'
+
+
+conn =''
+def getting(name):
+    size = 0
+    for dirpath, dirnames, file in os.walk(name):
+        for f in file:
+            fp = os.path.join(dirpath, f)
+            if not os.path.islink(fp):
+                size += os.path.getsize(fp)
+
+    return size
+def send_from(name):
+    global conn, size
+    root = check()
+    name = Path(root, name)
+    max_size = pow(2, 20) * 10 - getting(root)
+    if max_size < int(size):
+        return "Нет места"
+    else:
+        text = conn.recv(int(size)).decode()
+        try:
+            with open(name, 'w') as file:
+                file.write(text)
+            write_log("все получено")
+            return f'{name}'
+
+        except Exception:
+            return 'wrong'
+        
 def check_command(req):
     global user_dir, path
     req = users(req)
@@ -222,49 +264,6 @@ def cat(name):
             return "Не файл"
     except Exception:
         return "wrong cat"
-
-
-def help():
-    return 'pwd - вернёт название рабочей директории\n' \
-           'ls - вернёт список файлов в рабочей директории\n' \
-           'mkdir -  создаёт директорию с указанным именем\n' \
-           'rmdir -  удаляет директорию с указанным именем\n' \
-           'touch -  создаёт файл с указанным именем\n' \
-           'rm -  удаляет файл с указанным именем\n' \
-           'move -  перемещает файл/директорию в другую директорию\n' \
-           'rename -  переименновывает файл с указанным именем \n' \
-           'cat -  вернёт содержимое файла\n' \
-           'help - выводит справку по командам\n' \
-           'exit - выход из системы'
-
-
-conn =''
-def getting(name):
-    size = 0
-    for dirpath, dirnames, file in os.walk(name):
-        for f in file:
-            fp = os.path.join(dirpath, f)
-            if not os.path.islink(fp):
-                size += os.path.getsize(fp)
-
-    return size
-def send_from(name):
-    global conn, size
-    root = check()
-    name = Path(root, name)
-    max_size = pow(2, 20) * 10 - getting(root)
-    if max_size < int(size):
-        return "Нет места"
-    else:
-        text = conn.recv(int(size)).decode()
-        try:
-            with open(name, 'w') as file:
-                file.write(text)
-            write_log("все получено")
-            return f'{name}'
-
-        except Exception:
-            return 'wrong'
 
 
 def get_to(name):
