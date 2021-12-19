@@ -60,7 +60,7 @@
 
 ![image](https://user-images.githubusercontent.com/70855182/145113874-b7bc4def-d471-4580-a8fb-4c023c2f7f46.png)
 
-6.Реализуйте учётную запись администратора сервера.
+6.Реализуйте учётную запись администратора сервера. 
 
 ![image](https://user-images.githubusercontent.com/70855182/145113985-d5d72e7f-9cfc-4c19-a801-97ab23b066b0.png)
 
