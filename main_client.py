@@ -11,21 +11,8 @@ MAIN_DIR = Path(os.getcwd(), 'system_home')
 # def new_user(login, password, CURR_DIR):
 #     return login, password, CURR_DIR
 
-def msg_user(login, password, CURR_DIR, msg, c = 0):
+def user_msg(login, password, CURR_DIR, msg, c = 0):
     return f"{login}=login, {password}=password, {CURR_DIR}=curr_dir, {c}=len, {msg}=message".encode()
-
-def _send(login, password, CURR_DIR, req):
-    global sock
-    name = re.split("[ \\/]+", req)[-1]
-    curr_path_file = Path(MAIN_DIR, name)
-    sock.send(f'send {name}'.encode())
-    with open(curr_path_file, 'r') as file:
-        text = file.read()
-    # sock.send(str(len(text)).encode())
-    print(text.encode())
-    sock.send(msg_user(login, password, CURR_DIR, text.encode(), len(text)))
-    return
-
 
 def _res(req):
     global sock, f1, f2, MAIN_DIR, CURR_DIR
@@ -38,6 +25,20 @@ def _res(req):
     with open(curr_path_file, 'w') as file:
         file.write(text)
     return
+
+
+def _send(login, password, CURR_DIR, req):
+    global sock
+    name = re.split("[ \\/]+", req)[-1]
+    curr_path_file = Path(MAIN_DIR, name)
+    sock.send(f'send {name}'.encode())
+    with open(curr_path_file, 'r') as file:
+        text = file.read()
+    # sock.send(str(len(text)).encode())
+    print(text.encode())
+    sock.send(user_msg(login, password, CURR_DIR, text.encode(), len(text)))
+    return
+
 
 def main():
     global sock
@@ -63,7 +64,7 @@ def main():
                 _send(login, password, CURR_DIR, req)
 
         else:
-            sock.send(msg_user(login, password, CURR_DIR, req))
+            sock.send(user_msg(login, password, CURR_DIR, req))
             if req.find("get_to") == 0 or req == "get_to":
                 _res(req)
             else:
